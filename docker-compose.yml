@@ -4,9 +4,11 @@ services:
       context: .
       dockerfile: backend/Dockerfile
     env_file:
-      - .env
+      - path: .env
+        required: false
     environment:
       NEXUS_DATABASE_URL: postgresql+psycopg://nexus:nexus@postgres:5432/nexus
+      NEXUS_TEST_DATABASE_URL: postgresql+psycopg://nexus:nexus@postgres:5432/nexus
       NEXUS_REDIS_URL: redis://redis:6379/0
     ports:
       - "8000:8000"
