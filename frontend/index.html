@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>NEXUS / Engineering Intelligence</title>
+  <meta name="description" content="NEXUS engineering intelligence dashboard prototype">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app">
+    <header class="topbar">
+      <div class="brand" data-nav="overview">nexus<span class="cursor">_</span></div>
+      <nav class="topnav" aria-label="Primary">
+        <button data-nav="overview">[o] overview</button>
+        <button data-nav="repositories">[r] repositories</button>
+        <button data-nav="pulls">[p] pull requests</button>
+        <button data-nav="cicd">[c] ci / cd</button>
+        <button data-nav="analyst">[a] analyst</button>
+      </nav>
+      <button class="kbd" id="commandOpen">⌘ k</button>
+      <button class="user-dot" id="userButton" title="Account">ks</button>
+    </header>
+
+    <main id="main"></main>
+
+    <footer class="footer">
+      <span>nexus v0.1.0</span>
+      <span id="systemStatus"><i class="dot healthy"></i> all systems operational</span>
+      <span>chennai / india</span>
+    </footer>
+  </div>
+
+  <div class="command-overlay hidden" id="commandOverlay">
+    <div class="command-box">
+      <div class="command-input-wrap"><span>&gt;</span><input id="commandInput" autocomplete="off" placeholder="search repositories, prs, issues..."></div>
+      <div id="commandResults"></div>
+      <div class="command-help"><span>↑↓ navigate</span><span>↵ open</span><span>esc close</span></div>
+    </div>
+  </div>
+
+  <div class="toast hidden" id="toast"></div>
+  <script src="app.js"></script>
+</body>
+</html>
