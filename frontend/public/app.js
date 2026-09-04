@@ -1,3 +1,12 @@
+// At the top of app.js
+const API_BASE = "/api/v1";
+
+// Example:
+async function fetchRepos() {
+  const res = await fetch(`${API_BASE}/repos`);
+  return res.json();
+}
+
 const data = {
   repos: [
     {name:"payments-api", health:76, prs:14, ci:"84%", deploys:8, issue:"delivery risk increased 24%", state:"danger"},
