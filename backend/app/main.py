@@ -1,23 +1,45 @@
+from collections.abc import AsyncIterator
+from contextlib import asynccontextmanager
+
 from fastapi import FastAPI
-from fastapi.staticfiles import StaticFiles
-from fastapi.responses import FileResponse
-import os
+from fastapi.middleware.cors import CORSMiddleware
 
-app = FastAPI(title="NEXUS API")
+from app.api.router import api_router
+from app.core.config import Settings, get_settings
+from app.core.errors import register_exception_handlers
+from app.core.logging import configure_logging
+from app.core.middleware import RequestIdMiddleware
 
-# Get the absolute path to the frontend/public folder
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-FRONTEND_DIR = os.path.join(BASE_DIR, "frontend", "public")
 
-# Mount static files (CSS, JS)
-app.mount("/static", StaticFiles(directory=FRONTEND_DIR), name="static")
+@asynccontextmanager
+async def lifespan(app: FastAPI) -> AsyncIterator[None]:
+    yield
 
-# Serve index.html at the root "/"
-@app.get("/")
-async def serve_frontend():
-    return FileResponse(os.path.join(FRONTEND_DIR, "index.html"))
 
-# Placeholder for your health check
-@app.get("/api/health")
-async def health_check():
-    return {"status": "NEXUS operational"}
+def create_app(settings: Settings | None = None) -> FastAPI:
+    settings = settings or get_settings()
+    configure_logging(settings.log_level)
+
+    app = FastAPI(
+        title=settings.app_name,
+        debug=settings.debug,
+        version=settings.app_version,
+        lifespan=lifespan,
+    )
+    app.state.settings = settings
+
+    app.add_middleware(RequestIdMiddleware, header_name=settings.request_id_header)
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=settings.cors_origins,
+        allow_credentials=True,
+        allow_methods=["*"],
+        allow_headers=["*"],
+    )
+
+    register_exception_handlers(app)
+    app.include_router(api_router)
+    return app
+
+
+app = create_app()
