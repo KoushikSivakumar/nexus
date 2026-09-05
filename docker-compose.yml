@@ -11,7 +11,7 @@ services:
       # service hostname -- never localhost. Credentials are configurable via
       # NEXUS_POSTGRES_* and default to the project development values.
       NEXUS_DATABASE_URL: postgresql+psycopg://${NEXUS_POSTGRES_USER:-nexus}:${NEXUS_POSTGRES_PASSWORD:-nexus}@postgres:5432/${NEXUS_POSTGRES_DB:-nexus}
-      NEXUS_TEST_DATABASE_URL: postgresql+psycopg://${NEXUS_POSTGRES_USER:-nexus}:${NEXUS_POSTGRES_PASSWORD:-nexus}@postgres:5432/${NEXUS_POSTGRES_DB:-nexus}
+      NEXUS_TEST_DATABASE_URL: postgresql+psycopg://${NEXUS_POSTGRES_USER:-nexus}:${NEXUS_POSTGRES_PASSWORD:-nexus}@postgres:5432/${NEXUS_POSTGRES_DB:-nexus}_test
       NEXUS_REDIS_URL: redis://redis:6379/0
     ports:
       - "${NEXUS_API_PORT:-8000}:8000"
