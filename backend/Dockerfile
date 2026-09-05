@@ -12,4 +12,8 @@ COPY backend /app
 
 EXPOSE 8000
 
+# Migration bootstrap entrypoint: waits for PostgreSQL readiness, then applies
+# `alembic upgrade head` before handing off to the API command.
+ENTRYPOINT ["python", "/app/docker-entrypoint.py"]
+
 CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]

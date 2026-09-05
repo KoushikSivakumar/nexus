@@ -154,6 +154,8 @@ model_artifacts/
 # Keep the NEXUS backend SQLAlchemy models directory tracked
 !backend/app/models/
 !backend/app/models/**
+# ...but keep compiled Python artifacts under it ignored (the negation above re-included them)
+backend/app/models/__pycache__/
 checkpoints/
 *.pkl
 *.pickle

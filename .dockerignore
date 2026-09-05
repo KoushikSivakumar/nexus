@@ -1,0 +1,68 @@
+# ============================================================
+# NEXUS Docker build context exclusions
+# ============================================================
+
+# VCS
+.git
+.gitignore
+
+# Environment / secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.crt
+secrets/
+credentials/
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+env/
+.tox/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Frontend (not needed by the backend image)
+frontend/
+node_modules/
+dist/
+.vite/
+
+# Local tooling / IDEs
+.vscode/
+.idea/
+iml
+*.swp
+*.swo
+
+# Logs / runtime artifacts
+*.log
+logs/
+tmp/
+temp/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Local data
+.local/
+.local-data/
+vector_store/
+chroma/
+.faiss/
+models/
+model_artifacts/
+checkpoints/
+
+# Docs (not needed in the backend image)
+docs/
+README.md

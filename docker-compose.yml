@@ -7,11 +7,14 @@ services:
       - path: .env
         required: false
     environment:
-      NEXUS_DATABASE_URL: postgresql+psycopg://nexus:nexus@postgres:5432/nexus
-      NEXUS_TEST_DATABASE_URL: postgresql+psycopg://nexus:nexus@postgres:5432/nexus
+      # Inside Docker the backend always reaches PostgreSQL via the postgres
+      # service hostname -- never localhost. Credentials are configurable via
+      # NEXUS_POSTGRES_* and default to the project development values.
+      NEXUS_DATABASE_URL: postgresql+psycopg://${NEXUS_POSTGRES_USER:-nexus}:${NEXUS_POSTGRES_PASSWORD:-nexus}@postgres:5432/${NEXUS_POSTGRES_DB:-nexus}
+      NEXUS_TEST_DATABASE_URL: postgresql+psycopg://${NEXUS_POSTGRES_USER:-nexus}:${NEXUS_POSTGRES_PASSWORD:-nexus}@postgres:5432/${NEXUS_POSTGRES_DB:-nexus}
       NEXUS_REDIS_URL: redis://redis:6379/0
     ports:
-      - "8000:8000"
+      - "${NEXUS_API_PORT:-8000}:8000"
     depends_on:
       postgres:
         condition: service_healthy
@@ -19,20 +22,24 @@ services:
         condition: service_healthy
     volumes:
       - ./backend:/app
+    # The image ENTRYPOINT waits for PostgreSQL, runs `alembic upgrade head`,
+    # then executes the command below (uvicorn --reload).
     command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
 
   postgres:
     image: postgres:18-alpine
     environment:
-      POSTGRES_USER: nexus
-      POSTGRES_PASSWORD: nexus
-      POSTGRES_DB: nexus
+      POSTGRES_USER: ${NEXUS_POSTGRES_USER:-nexus}
+      POSTGRES_PASSWORD: ${NEXUS_POSTGRES_PASSWORD:-nexus}
+      POSTGRES_DB: ${NEXUS_POSTGRES_DB:-nexus}
     ports:
-      - "5432:5432"
+      - "${NEXUS_POSTGRES_PORT:-5432}:5432"
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      # postgres:18+ stores data in a major-version subdirectory under
+      # /var/lib/postgresql; mount the parent so the named volume persists data.
+      - postgres_data:/var/lib/postgresql
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U nexus -d nexus"]
+      test: ["CMD-SHELL", "pg_isready -U \"$${POSTGRES_USER}\" -d \"$${POSTGRES_DB}\""]
       interval: 5s
       timeout: 3s
       retries: 10
@@ -40,7 +47,7 @@ services:
   redis:
     image: redis:8-alpine
     ports:
-      - "6379:6379"
+      - "${NEXUS_REDIS_PORT:-6379}:6379"
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
       interval: 5s
