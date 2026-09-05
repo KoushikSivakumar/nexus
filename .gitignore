@@ -150,6 +150,10 @@ docker-compose.local.yml
 
 models/
 model_artifacts/
+
+# Keep the NEXUS backend SQLAlchemy models directory tracked
+!backend/app/models/
+!backend/app/models/**
 checkpoints/
 *.pkl
 *.pickle
