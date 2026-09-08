@@ -22,6 +22,9 @@ services:
         condition: service_healthy
     volumes:
       - ./backend:/app
+      # Serve the frontend prototype (the visual contract) from the host so
+      # edits are live without a rebuild; the image also carries a copy.
+      - ./frontend:/app/frontend
     # The image ENTRYPOINT waits for PostgreSQL, runs `alembic upgrade head`,
     # then executes the command below (uvicorn --reload).
     command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload

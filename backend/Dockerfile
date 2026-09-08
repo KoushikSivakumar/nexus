@@ -10,6 +10,10 @@ RUN pip install --no-cache-dir -r /app/requirements.txt
 
 COPY backend /app
 
+# The frontend prototype is the visual contract served by the API at /
+# and /static/*. It sits next to the backend at /app/frontend.
+COPY frontend /app/frontend
+
 EXPOSE 8000
 
 # Migration bootstrap entrypoint: waits for PostgreSQL readiness, then applies
